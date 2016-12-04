@@ -5,8 +5,6 @@ package pl.pmackowski.directbus.route;
  */
 public interface DirectBusStationService {
 
-    void addBusRoute(BusRoute busRoute);
-
     boolean isDirectRoute(int departureId, int arrivalId);
 
 }

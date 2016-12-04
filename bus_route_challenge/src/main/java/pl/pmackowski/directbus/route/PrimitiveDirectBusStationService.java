@@ -1,13 +1,17 @@
 package pl.pmackowski.directbus.route;
 
+import com.gs.collections.api.list.primitive.IntList;
 import com.gs.collections.api.list.primitive.MutableIntList;
 import com.gs.collections.api.set.primitive.IntSet;
 import com.gs.collections.api.set.primitive.MutableIntSet;
 import com.gs.collections.impl.list.mutable.primitive.IntArrayList;
 import com.gs.collections.impl.set.mutable.primitive.IntHashSet;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
+import pl.pmackowski.directbus.importer.RoutesImporter;
 
+import javax.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,21 +21,14 @@ import java.util.Map;
  *
  * Created by pmackowski on 2016-12-03.
  */
-@Component
 public class PrimitiveDirectBusStationService implements DirectBusStationService {
 
-    private Map<Integer, MutableIntSet> busStations = new HashMap<>();
     private Map<Integer, MutableIntList> busRoutes = new HashMap<>();
+    private Map<Integer, MutableIntList> busStations = new HashMap<>();
 
-    @Override
-    public void addBusRoute(BusRoute busRoute) {
-        int[] busStationsArrayInt  = busRoute.getBusStationsId().stream().mapToInt(i->i).toArray();
-        IntArrayList busStationsArray = new IntArrayList(busStationsArrayInt);
-        busRoutes.put(busRoute.getBusRouteId(), busStationsArray);
-        busStationsArray.forEach(busStationId -> {
-            busStations.putIfAbsent(busStationId, new IntHashSet());
-            busStations.get(busStationId).add(busRoute.getBusRouteId());
-        });
+    PrimitiveDirectBusStationService(Map<Integer, MutableIntList> busRoutes, Map<Integer, MutableIntList> busStations) {
+        this.busRoutes = busRoutes;
+        this.busStations = busStations;
     }
 
     /**
@@ -44,8 +41,8 @@ public class PrimitiveDirectBusStationService implements DirectBusStationService
     @Override
     @Cacheable("directRoutes")
     public boolean isDirectRoute(int departureId, int arrivalId) {
-        IntSet departureRoutes = busStations.get(departureId);
-        IntSet arrivalRoutes = busStations.get(arrivalId);
+        IntList departureRoutes = busStations.get(departureId);
+        IntList arrivalRoutes = busStations.get(arrivalId);
 
         if (departureRoutes == null || arrivalRoutes == null) {
             return false;

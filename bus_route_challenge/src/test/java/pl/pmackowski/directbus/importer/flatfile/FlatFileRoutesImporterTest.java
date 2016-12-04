@@ -1,18 +1,15 @@
 package pl.pmackowski.directbus.importer.flatfile;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import pl.pmackowski.directbus.importer.RoutesImporterException;
-import pl.pmackowski.directbus.route.DirectBusStationService;
+import pl.pmackowski.directbus.route.BusRoutes;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.BDDMockito.*;
 
 /**
  * Created by pmackowski on 2016-12-03.
@@ -26,25 +23,17 @@ public class FlatFileRoutesImporterTest {
     @Autowired
     private FlatFileRoutesImporter flatFileRoutesImporter;
 
-    @MockBean
-    @SuppressWarnings("unused")
-    private DirectBusStationService directBusStationService;
-
-    @Before
-    public void setup() {
-        Mockito.doNothing().when(directBusStationService).addBusRoute(any());
-    }
-
     @Test
     public void shouldImportBusRoutesFromCorrectFile() {
         // given
         flatFileRoutesImporter.routesFilePath = file("bus_routes_correct_file");
 
         // when
-        flatFileRoutesImporter.importBusRoutesToCache();
+        BusRoutes actual = flatFileRoutesImporter.importBusRoutes();
 
         // then
-        verify(directBusStationService, atLeast(10)).addBusRoute(any());
+        assertThat(actual).isNotNull();
+        assertThat(actual.getNumberOfRoutes()).isEqualTo(10);
     }
 
     @Test
@@ -53,7 +42,7 @@ public class FlatFileRoutesImporterTest {
         flatFileRoutesImporter.routesFilePath = file("bus_routes_file_does_not_exists");
 
         // when
-        assertThatThrownBy(flatFileRoutesImporter::importBusRoutesToCache)
+        assertThatThrownBy(flatFileRoutesImporter::importBusRoutes)
                 .isInstanceOf(RoutesImporterException.class)
                 .hasMessage("Input file src/test/resources/bus_routes_file_does_not_exists does not exist");
     }
@@ -64,7 +53,7 @@ public class FlatFileRoutesImporterTest {
         flatFileRoutesImporter.routesFilePath = file("");
 
         // when
-        assertThatThrownBy(flatFileRoutesImporter::importBusRoutesToCache)
+        assertThatThrownBy(flatFileRoutesImporter::importBusRoutes)
                 .isInstanceOf(RoutesImporterException.class)
                 .hasMessage("Input file src/test/resources/ is not a regular file");
     }
@@ -75,7 +64,7 @@ public class FlatFileRoutesImporterTest {
         flatFileRoutesImporter.routesFilePath = file("bus_routes_incorrect_header");
 
         // when
-        assertThatThrownBy(flatFileRoutesImporter::importBusRoutesToCache)
+        assertThatThrownBy(flatFileRoutesImporter::importBusRoutes)
                 .isInstanceOf(RoutesImporterException.class);
     }
 
@@ -85,7 +74,7 @@ public class FlatFileRoutesImporterTest {
         flatFileRoutesImporter.routesFilePath = file("bus_routes_with_many_incorrect_routes");
 
         // when
-        assertThatThrownBy(flatFileRoutesImporter::importBusRoutesToCache)
+        assertThatThrownBy(flatFileRoutesImporter::importBusRoutes)
                 .isInstanceOf(RoutesImporterException.class);
     }
 

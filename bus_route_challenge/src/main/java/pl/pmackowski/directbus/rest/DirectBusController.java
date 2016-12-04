@@ -1,4 +1,4 @@
-package pl.pmackowski.directbus.api;
+package pl.pmackowski.directbus.rest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,10 +27,10 @@ public class DirectBusController {
     }
 
     @RequestMapping(value = API_DIRECT, method = GET, produces = APPLICATION_JSON_VALUE)
-    public DirectBus isDirectRoute(@RequestParam(value = DEPARTURE_SID_PARAM) int departureSid,
+    public DirectBusResponse isDirectRoute(@RequestParam(value = DEPARTURE_SID_PARAM) int departureSid,
                                    @RequestParam(value = ARRIVAL_SID_PARAM) int arrivalSid) {
         boolean isDirectRoute = directBusStationService.isDirectRoute(departureSid, arrivalSid);
-        return new DirectBus(departureSid, arrivalSid, isDirectRoute);
+        return new DirectBusResponse(departureSid, arrivalSid, isDirectRoute);
     }
 
 }

@@ -1,11 +1,11 @@
-package pl.pmackowski.directbus.api;
+package pl.pmackowski.directbus.rest;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Created by pmackowski on 2016-12-03.
  */
-public class DirectBus {
+public class DirectBusResponse {
 
     @JsonProperty(value = "dep_sid")
     private final int departureSid;
@@ -14,7 +14,7 @@ public class DirectBus {
     @JsonProperty(value = "direct_bus_route")
     private final boolean directBusRoute;
 
-    public DirectBus(int departureSid, int arrivalSid, boolean directBusRoute) {
+    public DirectBusResponse(int departureSid, int arrivalSid, boolean directBusRoute) {
         this.departureSid = departureSid;
         this.arrivalSid = arrivalSid;
         this.directBusRoute = directBusRoute;

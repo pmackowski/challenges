@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import pl.pmackowski.directbus.importer.RoutesImporter;
 import pl.pmackowski.directbus.importer.RoutesImporterException;
-import pl.pmackowski.directbus.route.DirectBusStationService;
+import pl.pmackowski.directbus.route.BusRoutes;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -31,20 +31,17 @@ public class FlatFileRoutesImporter implements RoutesImporter {
 
     @VisibleForTesting
     String routesFilePath;
-    private final DirectBusStationService directBusStationService;
     private final FlatFileBusRouteExtractor flatFileBusRouteExtractor;
 
     @Autowired
     public FlatFileRoutesImporter(@Value("${routes.file.path}") String routesFilePath,
-                                  DirectBusStationService directBusStationService,
                                   FlatFileBusRouteExtractor flatFileBusRouteExtractor) {
         this.routesFilePath = routesFilePath;
-        this.directBusStationService = directBusStationService;
         this.flatFileBusRouteExtractor = flatFileBusRouteExtractor;
     }
 
     @Override
-    public void importBusRoutesToCache() {
+    public BusRoutes importBusRoutes() {
         Path path = Paths.get(routesFilePath);
 
         check(Files.exists(path), PATH_DOES_NOT_EXIST_MESSAGE, routesFilePath);
@@ -53,7 +50,9 @@ public class FlatFileRoutesImporter implements RoutesImporter {
 
         int numberOfRoutes = getNumberOfRoutes(path);
         check(numberOfRoutes > 0, INCORRECT_HEADER_MESSAGE, routesFilePath);
-        importBusRoutesToCache(path, numberOfRoutes);
+        BusRoutes busRoutes = new BusRoutes(numberOfRoutes);
+        importBusRoutes(path, busRoutes, numberOfRoutes);
+        return busRoutes;
     }
 
     private int getNumberOfRoutes(Path path) {
@@ -71,13 +70,13 @@ public class FlatFileRoutesImporter implements RoutesImporter {
         }
     }
 
-    private void importBusRoutesToCache(Path path, int numberOfRoutes) {
+    private void importBusRoutes(Path path, BusRoutes busRoutes, int numberOfRoutes) {
         try (Stream<String> stream = Files.lines(path)) {
             stream
                 .skip(1)
                 .limit(numberOfRoutes) // further routes are ignored
                 .map(flatFileBusRouteExtractor::extract)
-                .forEach(directBusStationService::addBusRoute);
+                .forEach(busRoutes::addBusRoute);
         } catch (IOException exc) {
             throw new RoutesImporterException(format(FILE_CANNOT_BE_PROCESSED, routesFilePath), exc);
         }
