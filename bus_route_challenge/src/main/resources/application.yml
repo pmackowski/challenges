@@ -1,0 +1,10 @@
+server.port: 8088
+
+# uncomment to turn on actuator metrics
+#management.port: 8089
+#management.address: 127.0.0.1
+
+routes.file.path: src/test/resources/bus_routes_correct_file
+
+spring.cache.cache-names: directRoutes
+spring.cache.guava.spec: maximumSize=10000000
