@@ -3,7 +3,7 @@ package pl.pmackowski.directbus.importer;
 /**
  * Created by pmackowski on 2016-12-03.
  */
-public class RoutesImporterPreconditions {
+class RoutesImporterPreconditions {
 
     public static void check(boolean b, String errorMessage) {
         if (!b) {

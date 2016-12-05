@@ -1,10 +1,8 @@
 package pl.pmackowski.directbus.importer;
 
 import com.gs.collections.api.list.primitive.IntList;
-import com.gs.collections.api.list.primitive.MutableIntList;
 import pl.pmackowski.directbus.api.BusRoutes;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**

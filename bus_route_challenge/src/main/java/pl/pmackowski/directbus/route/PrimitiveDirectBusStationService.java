@@ -38,10 +38,8 @@ public class PrimitiveDirectBusStationService implements DirectBusStationService
         if (sortedDepartureRoutes == null || sortedArrivalRoutes == null) {
             return false;
         }
-        return intersectRoutes(sortedDepartureRoutes, sortedArrivalRoutes).anySatisfy(routeId -> {
-            IntList busStations = busRouteToStations.get(routeId);
-            return busStations.indexOf(departureId) < busStations.indexOf(arrivalId);
-        });
+        return intersectRoutes(sortedDepartureRoutes, sortedArrivalRoutes)
+                    .anySatisfy(routeId -> routeContainsStations(routeId, departureId, arrivalId));
     }
 
     /**
@@ -68,5 +66,10 @@ public class PrimitiveDirectBusStationService implements DirectBusStationService
             }
         }
         return intersectRoutes;
+    }
+
+    private boolean routeContainsStations(int routeId, int departureId, int arrivalId) {
+        IntList busStations = busRouteToStations.get(routeId);
+        return busStations.indexOf(departureId) < busStations.indexOf(arrivalId);
     }
 }

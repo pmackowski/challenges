@@ -33,7 +33,7 @@ public class DirectBusStationServiceFactory {
             int routeId = routeEntry.getKey();
             IntList busStationsId = routeEntry.getValue();
             busStationsId.forEach(busStationId -> {
-                busStations.putIfAbsent(busStationId, new IntArrayList());
+                busStations.computeIfAbsent(busStationId, integer -> new IntArrayList());
                 busStations.get(busStationId).add(routeId);
             });
         });

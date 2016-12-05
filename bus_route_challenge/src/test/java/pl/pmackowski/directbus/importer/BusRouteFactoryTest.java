@@ -59,4 +59,26 @@ public class BusRouteFactoryTest {
                 .hasMessage("Bus route \"1 1 a 4\" should contain numbers separated by spaces");
     }
 
+    @Test
+    public void shouldVerifyThatBusRouteContainsAtLeastTwoStations() {
+        // given
+        String line = "12 2";
+
+        // when
+        assertThatThrownBy(() -> busRouteFactory.from(line))
+                .isInstanceOf(RoutesImporterException.class)
+                .hasMessage("Bus route 12 should contain at least 2 stations");
+    }
+
+    @Test
+    public void shouldVerifyUniqueBusStations() {
+        // given
+        String line = "12 10 1 2 3 4 5 10";
+
+        // when
+        assertThatThrownBy(() -> busRouteFactory.from(line))
+                .isInstanceOf(RoutesImporterException.class)
+                .hasMessage("Bus route 12 should contain unique stations");
+    }
+
 }
