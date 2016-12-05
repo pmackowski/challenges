@@ -1,8 +1,13 @@
 package pl.pmackowski.directbus.route;
 
+import com.gs.collections.api.list.primitive.IntList;
 import com.gs.collections.api.list.primitive.MutableIntList;
 import com.gs.collections.impl.list.mutable.primitive.IntArrayList;
-import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import pl.pmackowski.directbus.api.BusRoutes;
+import pl.pmackowski.directbus.api.DirectBusStationService;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -10,27 +15,29 @@ import java.util.Map;
 /**
  * Created by pmackowski on 2016-12-04.
  */
-@Component
+@Configuration
 public class DirectBusStationServiceFactory {
 
-    public DirectBusStationService create(BusRoutes busRoutes) {
-        Map<Integer, MutableIntList> busRoutesMap = busRoutes.getBusRoutes();
-        Map<Integer, MutableIntList> busStationsMap = createBusStations(busRoutes);
-        return new PrimitiveDirectBusStationService(busRoutesMap, busStationsMap);
+    @Bean
+    public DirectBusStationService create(@Autowired BusRoutes busRoutes) {
+        Map<Integer, IntList> busRouteToStations = busRoutes.getBusRoutes();
+        Map<Integer, MutableIntList> busStationToSortedRoutes = createBusStationToSortedRoutes(busRoutes);
+        return new PrimitiveDirectBusStationService(busRouteToStations, busStationToSortedRoutes);
     }
 
-    private Map<Integer, MutableIntList> createBusStations(BusRoutes busRoutes) {
-        Map<Integer, MutableIntList> busRoutesMap = busRoutes.getBusRoutes();
+    private Map<Integer, MutableIntList> createBusStationToSortedRoutes(BusRoutes busRoutes) {
+        Map<Integer, IntList> busRoutesMap = busRoutes.getBusRoutes();
         Map<Integer, MutableIntList> busStations = new HashMap<>();
 
         busRoutesMap.entrySet().stream().forEach(routeEntry -> {
             int routeId = routeEntry.getKey();
-            MutableIntList busStationsId = routeEntry.getValue();
+            IntList busStationsId = routeEntry.getValue();
             busStationsId.forEach(busStationId -> {
                 busStations.putIfAbsent(busStationId, new IntArrayList());
                 busStations.get(busStationId).add(routeId);
             });
         });
+        busStations.values().forEach(MutableIntList::sortThis);
         return busStations;
     }
 

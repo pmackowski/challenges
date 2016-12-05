@@ -1,5 +1,6 @@
 package pl.pmackowski.directbus.route;
 
+import com.google.common.collect.ImmutableMap;
 import org.junit.Before;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.Theories;
@@ -7,8 +8,10 @@ import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import pl.pmackowski.directbus.api.BusRoutes;
+import pl.pmackowski.directbus.api.DirectBusStationService;
 
-import static com.google.common.collect.ImmutableList.of;
+import static com.gs.collections.impl.list.mutable.primitive.IntArrayList.newListWith;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 
@@ -19,7 +22,7 @@ import static org.mockito.BDDMockito.given;
 public class PrimitiveDirectBusResponseStationServiceTest {
 
     @Mock
-    private BusRoute busRoute1, busRoute2, busRoute3;
+    private BusRoutes busRoutes;
 
     private DirectBusStationService directBusStationService;
 
@@ -49,15 +52,14 @@ public class PrimitiveDirectBusResponseStationServiceTest {
     @Theory
     public void shouldCheckDirectRoute(BusRouteTestCase testCase) {
         // given
-        given(busRoute1.getBusRouteId()).willReturn(1);
-        given(busRoute2.getBusRouteId()).willReturn(2);
-        given(busRoute3.getBusRouteId()).willReturn(3);
 
-        given(busRoute1.getBusStationsId()).willReturn(of(1, 2, 3, 4));
-        given(busRoute2.getBusStationsId()).willReturn(of(4, 8));
-        given(busRoute3.getBusStationsId()).willReturn(of(10, 3, 9));
+        given(busRoutes.getNumberOfRoutes()).willReturn(3);
+        given(busRoutes.getBusRoutes()).willReturn(ImmutableMap.of(
+                1, newListWith(1, 2, 3, 4),
+                2, newListWith(4, 8),
+                3, newListWith(10, 3, 9)
+        ));
 
-        BusRoutes busRoutes = new BusRoutes(3, busRoute1, busRoute2, busRoute3);
         directBusStationService = new DirectBusStationServiceFactory().create(busRoutes);
 
         // when
