@@ -6,7 +6,7 @@ DATA_FILE=$2
 # Keep the pwd in mind!
 # Example: RUN="java -jar $DIR/target/magic.jar"
 
-RUN="java -Xmx4g -Droutes.file.path=$DATA_FILE -jar $DIR/target/directbus-0.1-SNAPSHOT.jar"
+RUN="java -Xmx4g -Droutes.file.path=$DATA_FILE -jar $DIR/target/directbus-1.0.jar"
 NAME="Direct-Bus-Pawel-Mackowski"
 
 PIDFILE=/tmp/$NAME.pid
