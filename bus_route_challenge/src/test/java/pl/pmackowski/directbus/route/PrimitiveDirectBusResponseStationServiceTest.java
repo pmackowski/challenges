@@ -69,7 +69,7 @@ public class PrimitiveDirectBusResponseStationServiceTest {
         assertThat(actual).isEqualTo(testCase.isDirectRoute());
     }
 
-    public static class BusRouteTestCase {
+    private static class BusRouteTestCase {
         private final int departureId;
         private final int arrivalId;
         private final boolean directRoute;
