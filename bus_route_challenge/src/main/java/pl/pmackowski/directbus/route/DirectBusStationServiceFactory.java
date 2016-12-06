@@ -29,9 +29,7 @@ public class DirectBusStationServiceFactory {
         Map<Integer, IntList> busRoutesMap = busRoutes.getBusRoutes();
         Map<Integer, MutableIntList> busStations = new HashMap<>();
 
-        busRoutesMap.entrySet().stream().forEach(routeEntry -> {
-            int routeId = routeEntry.getKey();
-            IntList busStationsId = routeEntry.getValue();
+        busRoutesMap.forEach((routeId, busStationsId) -> {
             busStationsId.forEach(busStationId -> {
                 busStations.computeIfAbsent(busStationId, integer -> new IntArrayList());
                 busStations.get(busStationId).add(routeId);
